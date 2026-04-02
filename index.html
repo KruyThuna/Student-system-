@@ -1,21 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>My Student Management System</h1>
-    <p>Welcome to the student management system!</p>
-    <nav>
-        <ul>
-            <li><a href="add_student.html">Add Student</a></li>
-            <li><a href="view_students.html">View Students</a></li>
-            <li><a href="update_student.html">Update Student</a></li>
-            <li><a href="delete_student.html">Delete Student</a></li>
-        </ul>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management</title>
 
-    </nav>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* ===== LAYOUT ===== */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background: #34495e;
+}
+
+/* ===== CONTENT ===== */
+.content {
+    flex: 1;
+    padding: 40px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    animation: fadeIn 1s ease;
+    text-align: center;
+}
+
+button {
+    padding: 12px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+/* ===== MOBILE MENU BUTTON ===== */
+.menu-btn {
+    display: none;
+    background: #3498db;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 100%;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        left: -250px;
+        top: 0;
+        height: 100%;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .content {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+<div class="wrapper">
+    
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <h2>Student System</h2>
+        <a href="#" onclick="goPage('index.html')">Home</a>
+        <a href="#" onclick="goPage('add_student.html')">Add Student</a>
+        <a href="#" onclick="goPage('view_students.html')">View Students</a>
+        <a href="#" onclick="goPage('update_student.html')">Update Student</a>
+        <a href="#" onclick="goPage('delete_student.html')">Delete Student</a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <div class="card" id="mainBox">
+            <h1>My Student Management System</h1>
+            <p>Welcome to the system!</p>
+
+            <button onclick="goPage('add_student.html')">Add</button>
+            <button onclick="goPage('view_students.html')">View</button>
+            <button onclick="goPage('update_student.html')">Update</button>
+            <button onclick="goPage('delete_student.html')">Delete</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleMenu() {
+    document.getElementById("sidebar").classList.toggle("active");
+}
+
+function goPage(page) {
+    const box = document.getElementById("mainBox");
+    box.style.opacity = "0";
+
+    setTimeout(() => {
+        window.location.href = page;
+    }, 400);
+}
+</script>
+
 </body>
 </html>
