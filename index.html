@@ -1,231 +1,648 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Management</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Management System</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f4f6f9;
-}
+    <style>
+      /* RESET & BODY */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+      }
+      .wrapper {
+        display: flex;
+        min-height: 100vh;
+        transition: 0.3s;
+      }
 
-/* Layout */
-.wrapper {
-    display: flex;
-}
+      /* SIDEBAR */
+      .sidebar {
+        width: 250px;
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        transition: 0.3s;
+        flex-shrink: 0;
+      }
+      .sidebar a {
+        display: block;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 6px;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .sidebar a:hover {
+        background: #34495e;
+      }
 
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    background: #2c3e50;
-    color: white;
-    padding: 20px;
-    height: 100vh;
-}
+      /* MINI PROFILE */
+      .mini-profile {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .mini-profile img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 3px solid #3498db;
+        object-fit: cover;
+      }
+      .mini-profile h4 {
+        margin: 5px 0;
+        color: #fff;
+        font-size: 14px;
+      }
+      .mini-profile p {
+        font-size: 12px;
+        color: #ccc;
+      }
 
-.sidebar h2 {
-    text-align: center;
-}
+      /* CONTENT */
+      .content {
+        flex: 1;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        animation: fadeIn 0.5s;
+        box-sizing: border-box;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
 
-.sidebar a {
-    display: block;
-    padding: 10px;
-    margin: 10px 0;
-    cursor: pointer;
-    border-radius: 5px;
-}
+      /* FORM */
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
 
-.sidebar a:hover {
-    background: #34495e;
-}
+      /* BUTTON */
+      button {
+        padding: 10px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #2980b9;
+        transform: scale(1.05);
+      }
 
-/* Content */
-.content {
-    flex: 1;
-    padding: 30px;
-}
+      /* TABLE */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      th,
+      td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+      }
 
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-}
+      /* PROFILE */
+      .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        margin: auto;
+        object-fit: cover;
+      }
+      .profile-card {
+        text-align: center;
+        background: #ecf0f1;
+        padding: 15px;
+        border-radius: 10px;
+      }
 
-/* Form */
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-}
+      /* CAROUSEL */
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+      .carousel img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: none;
+      }
+      .carousel img.active {
+        display: block;
+        animation: fadeIn 1s;
+      }
+      .carousel-dots {
+        text-align: center;
+        margin-top: 8px;
+      }
+      .carousel-dots span {
+        height: 8px;
+        width: 8px;
+        margin: 0 3px;
+        display: inline-block;
+        background: #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .carousel-dots span.active {
+        background: #3498db;
+      }
 
-/* Button */
-button {
-    padding: 10px;
-    background: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+      /* BOTTOM PROFILE FORM */
+      .profile-form {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        transition: 0.5s;
+        z-index: 1000;
+        max-height: 90%;
+        overflow-y: auto;
+      }
+      .profile-form.active {
+        bottom: 0;
+      }
+      .open-form-btn {
+        position: fixed;
+        bottom: 70px;
+        right: 15px;
+        background: #3498db;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        z-index: 1000;
+        font-size: 14px;
+      }
+      .open-form-btn:hover {
+        background: #2980b9;
+        transform: scale(1.05);
+      }
 
-button:hover {
-    background: #2980b9;
-}
+      /* BOTTOM NAVIGATION */
+      .bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #2c3e50;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+      }
+      .bottom-nav button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .bottom-nav button.active {
+        color: #3498db;
+      }
+      .bottom-nav button i {
+        font-size: 18px;
+      }
 
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+      /* ANIMATION */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-}
-</style>
-</head>
+      /* RESPONSIVE */
+      @media (max-width: 1024px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          width: 200px;
+          position: absolute;
+          left: -250px;
+          top: 0;
+          height: 100%;
+          z-index: 1000;
+        }
+        .sidebar.active {
+          left: 0;
+        }
+        .menu-btn {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          border: none;
+          background: #3498db;
+          color: white;
+          cursor: pointer;
+        }
+        .bottom-nav {
+          display: flex;
+        }
+        .profile-img {
+          width: 80px;
+          height: 80px;
+        }
+      }
+      @media (max-width: 480px) {
+        .content {
+          padding: 10px;
+        }
+        input,
+        textarea {
+          font-size: 13px;
+        }
+        button {
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+        .carousel img {
+          height: 140px;
+        }
+        .mini-profile img {
+          width: 50px;
+          height: 50px;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
-<body>
+    <div class="wrapper">
+      <!-- SIDEBAR -->
+      <div class="sidebar" id="sidebar">
+        <div class="mini-profile">
+          <img
+            id="miniImg"
+            src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=60&q=80"
+          />
+          <h4 id="miniName">Your Name</h4>
+          <p id="miniID">ID: ---</p>
+        </div>
 
-<div class="wrapper">
+        <h2>Student System</h2>
+        <a onclick="showSection('home')">Home</a>
+        <a onclick="showSection('dashboard')">Manage Students</a>
+        <a onclick="showSection('profile')">Profile</a>
+      </div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>System</h2>
-    <a onclick="showSection('home')">Home</a>
-    <a onclick="showSection('add')">Add Student</a>
-    <a onclick="showSection('view')">View Students</a>
-</div>
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- HOME -->
+        <div id="home" class="card">
+          <h1>Welcome to Student System</h1>
 
-<!-- CONTENT -->
-<div class="content">
+          <!-- Carousel -->
+          <div class="carousel">
+            <img
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
+              class="active"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=800&q=80"
+            />
+            <div class="carousel-dots">
+              <span class="active" onclick="gotoSlide(0)"></span>
+              <span onclick="gotoSlide(1)"></span>
+              <span onclick="gotoSlide(2)"></span>
+            </div>
+          </div>
 
-    <!-- HOME -->
-    <div id="home" class="card">
-        <h1>Student Management System</h1>
-        <p>Welcome! Use menu to manage students.</p>
-    </div>
+          <!-- Registration Info -->
+          <div class="grid">
+            <div class="card">
+              <h3>Total Students</h3>
+              <p id="totalStudents">0</p>
+            </div>
+            <div class="card">
+              <h3>Unique Courses</h3>
+              <p id="uniqueCourses">0</p>
+            </div>
+          </div>
+        </div>
 
-    <!-- ADD -->
-    <div id="add" class="card" style="display:none;">
-        <h2>Add Student</h2>
-
-        <input type="text" id="id" placeholder="Student ID">
-        <input type="text" id="name" placeholder="Name">
-        <input type="text" id="course" placeholder="Course">
-
-        <button onclick="addStudent()">Save</button>
-    </div>
-
-    <!-- VIEW -->
-    <div id="view" class="card" style="display:none;">
-        <h2>Student List</h2>
-
-        <table>
-            <thead>
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="grid" style="display: none">
+          <div class="card">
+            <h3>Add / Update Student</h3>
+            <input id="id" placeholder="ID" />
+            <input id="name" placeholder="Name" />
+            <input id="course" placeholder="Course" />
+            <button onclick="addOrUpdateStudent()">Save</button>
+          </div>
+          <div class="card">
+            <h3>Student List</h3>
+            <table>
+              <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Action</th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Course</th>
+                  <th>Action</th>
                 </tr>
-            </thead>
-            <tbody id="table"></tbody>
-        </table>
+              </thead>
+              <tbody id="table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="profile" class="card" style="display: none">
+          <h2>Profile</h2>
+
+          <div class="profile-card">
+            <img
+              id="cardImg"
+              class="profile-img"
+              src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=200&q=80"
+            />
+            <h3 id="cardName">Your Name</h3>
+            <p id="cardID">ID: ---</p>
+            <p id="cardTitle">Professional Title</p>
+            <p id="cardSkills">Skills: ...</p>
+            <p id="cardBio">Your bio...</p>
+          </div>
+
+          <button class="open-form-btn" onclick="toggleProfileForm()">
+            Add / Edit Profile
+          </button>
+
+          <div id="profileForm" class="profile-form">
+            <h3>Add / Edit Profile</h3>
+            <img
+              id="preview"
+              class="profile-img"
+              src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=200&q=80"
+            />
+            <input type="file" onchange="uploadImage(event)" />
+            <input
+              id="pname"
+              placeholder="Name"
+              oninput="updateProfileView()"
+            />
+            <input
+              id="pid"
+              placeholder="Student ID"
+              oninput="updateProfileView()"
+            />
+            <input
+              id="profTitle"
+              placeholder="Professional Title"
+              oninput="updateProfileView()"
+            />
+            <textarea
+              id="skills"
+              placeholder="Skills"
+              oninput="updateProfileView()"
+            ></textarea>
+            <textarea
+              id="bio"
+              placeholder="Bio"
+              oninput="updateProfileView()"
+            ></textarea>
+            <button onclick="saveProfile()">Save</button>
+            <button type="button" onclick="toggleProfileForm()">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-</div>
-</div>
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+      <button id="navHome" class="active" onclick="showSectionMobile('home')">
+        <i class="fa fa-home"></i>Home
+      </button>
+      <button id="navDashboard" onclick="showSectionMobile('dashboard')">
+        <i class="fa fa-users"></i>Students
+      </button>
+      <button id="navProfile" onclick="showSectionMobile('profile')">
+        <i class="fa fa-user"></i>Profile
+      </button>
+    </div>
 
-<script>
+    <script>
+      // MENU
+      function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
 
-// SWITCH SECTION
-function showSection(section) {
-    document.getElementById("home").style.display = "none";
-    document.getElementById("add").style.display = "none";
-    document.getElementById("view").style.display = "none";
+      // SWITCH SECTION DESKTOP
+      function showSection(sec) {
+        ["home", "dashboard", "profile"].forEach(
+          (s) => (document.getElementById(s).style.display = "none"),
+        );
+        document.getElementById(sec).style.display = "block";
+        if (sec === "dashboard") displayStudents();
+        if (sec === "profile") loadProfile();
+      }
 
-    document.getElementById(section).style.display = "block";
+      // SWITCH SECTION MOBILE
+      function showSectionMobile(sec) {
+        showSection(sec);
+        document
+          .querySelectorAll(".bottom-nav button")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .getElementById("nav" + sec.charAt(0).toUpperCase() + sec.slice(1))
+          .classList.add("active");
+      }
 
-    if(section === "view") displayStudents();
-}
+      // STUDENTS
+      function getStudents() {
+        return JSON.parse(localStorage.getItem("students")) || [];
+      }
+      function saveStudents(d) {
+        localStorage.setItem("students", JSON.stringify(d));
+      }
+      let editIndex = -1;
+      function addOrUpdateStudent() {
+        let s = getStudents();
+        let student = { id: id.value, name: name.value, course: course.value };
+        if (editIndex >= 0) {
+          s[editIndex] = student;
+          editIndex = -1;
+        } else {
+          s.push(student);
+        }
+        saveStudents(s);
+        displayStudents();
+        updateCounters();
+        id.value = "";
+        name.value = "";
+        course.value = "";
+      }
+      function displayStudents() {
+        let t = document.getElementById("table");
+        t.innerHTML = "";
+        getStudents().forEach((s, i) => {
+          t.innerHTML += `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.course}</td><td><button onclick="editStudent(${i})">Edit</button> <button onclick="deleteStudent(${i})">Delete</button></td></tr>`;
+        });
+      }
+      function deleteStudent(i) {
+        let s = getStudents();
+        s.splice(i, 1);
+        saveStudents(s);
+        displayStudents();
+        updateCounters();
+      }
+      function editStudent(i) {
+        let s = getStudents()[i];
+        id.value = s.id;
+        name.value = s.name;
+        course.value = s.course;
+        editIndex = i;
+      }
 
-// GET DATA
-function getStudents() {
-    return JSON.parse(localStorage.getItem("students")) || [];
-}
+      // PROFILE FORM
+      function toggleProfileForm() {
+        document.getElementById("profileForm").classList.toggle("active");
+      }
+      function uploadImage(e) {
+        let r = new FileReader();
+        r.onload = function () {
+          preview.src = r.result;
+          cardImg.src = r.result;
+          miniImg.src = r.result;
+          localStorage.setItem("profileImg", r.result);
+        };
+        r.readAsDataURL(e.target.files[0]);
+      }
+      function updateProfileView() {
+        cardName.innerText = pname.value || "Your Name";
+        cardID.innerText = "ID: " + (pid.value || "---");
+        cardTitle.innerText = profTitle.value || "Professional Title";
+        cardSkills.innerText = "Skills: " + (skills.value || "...");
+        cardBio.innerText = bio.value || "Your bio...";
+        miniName.innerText = pname.value || "Your Name";
+        miniID.innerText = "ID: " + (pid.value || "---");
+      }
+      function saveProfile() {
+        localStorage.setItem("profileName", pname.value);
+        localStorage.setItem("profileID", pid.value);
+        localStorage.setItem("profileTitle", profTitle.value);
+        localStorage.setItem("profileSkills", skills.value);
+        localStorage.setItem("profileBio", bio.value);
+        updateProfileView();
+        toggleProfileForm();
+        alert("Profile saved!");
+      }
+      function loadProfile() {
+        let img = localStorage.getItem("profileImg");
+        if (img) {
+          preview.src = img;
+          cardImg.src = img;
+          miniImg.src = img;
+        }
+        pname.value = localStorage.getItem("profileName") || "";
+        pid.value = localStorage.getItem("profileID") || "";
+        profTitle.value = localStorage.getItem("profileTitle") || "";
+        skills.value = localStorage.getItem("profileSkills") || "";
+        bio.value = localStorage.getItem("profileBio") || "";
+        updateProfileView();
+      }
 
-// SAVE DATA
-function saveStudents(data) {
-    localStorage.setItem("students", JSON.stringify(data));
-}
+      // INIT
+      window.onload = function () {
+        miniName.innerText = localStorage.getItem("profileName") || "Your Name";
+        miniID.innerText =
+          "ID: " + (localStorage.getItem("profileID") || "---");
+        let img = localStorage.getItem("profileImg");
+        if (img) miniImg.src = img;
+        displayStudents();
+        updateCounters();
+        carouselStart();
+      };
 
-// ADD
-function addStudent() {
-    let id = document.getElementById("id").value;
-    let name = document.getElementById("name").value;
-    let course = document.getElementById("course").value;
+      // COUNTERS
+      function updateCounters() {
+        let students = getStudents();
+        document.getElementById("totalStudents").innerText = students.length;
+        let courses = [...new Set(students.map((s) => s.course))];
+        document.getElementById("uniqueCourses").innerText = courses.length;
+      }
 
-    let students = getStudents();
-
-    students.push({ id, name, course });
-
-    saveStudents(students);
-
-    alert("Student Added!");
-
-    document.getElementById("id").value = "";
-    document.getElementById("name").value = "";
-    document.getElementById("course").value = "";
-}
-
-// DISPLAY
-function displayStudents() {
-    let students = getStudents();
-    let table = document.getElementById("table");
-
-    table.innerHTML = "";
-
-    students.forEach((s, index) => {
-        table.innerHTML += `
-        <tr>
-            <td>${s.id}</td>
-            <td>${s.name}</td>
-            <td>${s.course}</td>
-            <td>
-                <button onclick="editStudent(${index})">Edit</button>
-                <button onclick="deleteStudent(${index})">Delete</button>
-            </td>
-        </tr>`;
-    });
-}
-
-// DELETE
-function deleteStudent(index) {
-    let students = getStudents();
-    students.splice(index, 1);
-    saveStudents(students);
-    displayStudents();
-}
-
-// EDIT
-function editStudent(index) {
-    let students = getStudents();
-    let s = students[index];
-
-    showSection('add');
-
-    document.getElementById("id").value = s.id;
-    document.getElementById("name").value = s.name;
-    document.getElementById("course").value = s.course;
-
-    deleteStudent(index); // remove old
-}
-
-</script>
-
-</body>
+      // CAROUSEL
+      let slideIndex = 0;
+      function carouselStart() {
+        showSlide(slideIndex);
+        setInterval(() => {
+          slideIndex = (slideIndex + 1) % 3;
+          showSlide(slideIndex);
+        }, 3000);
+      }
+      function showSlide(n) {
+        let slides = document.querySelectorAll(".carousel img");
+        let dots = document.querySelectorAll(".carousel-dots span");
+        slides.forEach((s) => s.classList.remove("active"));
+        dots.forEach((d) => d.classList.remove("active"));
+        slides[n].classList.add("active");
+        dots[n].classList.add("active");
+      }
+      function gotoSlide(n) {
+        slideIndex = n;
+        showSlide(n);
+      }
+    </script>
+  </body>
 </html>
