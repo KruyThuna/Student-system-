@@ -8,23 +8,22 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #f4f6f9;
 }
 
-/* ===== LAYOUT ===== */
+/* Layout */
 .wrapper {
     display: flex;
-    min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* Sidebar */
 .sidebar {
-    width: 250px;
+    width: 220px;
     background: #2c3e50;
     color: white;
     padding: 20px;
-    transition: 0.3s;
+    height: 100vh;
 }
 
 .sidebar h2 {
@@ -33,133 +32,199 @@ body {
 
 .sidebar a {
     display: block;
-    color: white;
-    text-decoration: none;
-    padding: 12px;
+    padding: 10px;
     margin: 10px 0;
-    border-radius: 6px;
-    transition: 0.3s;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 .sidebar a:hover {
     background: #34495e;
 }
 
-/* ===== CONTENT ===== */
+/* Content */
 .content {
     flex: 1;
-    padding: 40px;
+    padding: 30px;
 }
 
 .card {
     background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    animation: fadeIn 1s ease;
-    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
 }
 
+/* Form */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+}
+
+/* Button */
 button {
-    padding: 12px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 8px;
+    padding: 10px;
     background: #3498db;
     color: white;
+    border: none;
     cursor: pointer;
-    transition: 0.3s;
 }
 
 button:hover {
     background: #2980b9;
-    transform: scale(1.05);
 }
 
-/* ===== MOBILE MENU BUTTON ===== */
-.menu-btn {
-    display: none;
-    background: #3498db;
-    color: white;
-    padding: 10px;
-    border: none;
+/* Table */
+table {
     width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width: 768px) {
-    .sidebar {
-        position: absolute;
-        left: -250px;
-        top: 0;
-        height: 100%;
-    }
-
-    .sidebar.active {
-        left: 0;
-    }
-
-    .menu-btn {
-        display: block;
-    }
-
-    .content {
-        padding: 20px;
-    }
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-
 <div class="wrapper">
-    
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-        <h2>Student System</h2>
-        <a href="#" onclick="goPage('index.html')">Home</a>
-        <a href="#" onclick="goPage('add_student.html')">Add Student</a>
-        <a href="#" onclick="goPage('view_students.html')">View Students</a>
-        <a href="#" onclick="goPage('update_student.html')">Update Student</a>
-        <a href="#" onclick="goPage('delete_student.html')">Delete Student</a>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>System</h2>
+    <a onclick="showSection('home')">Home</a>
+    <a onclick="showSection('add')">Add Student</a>
+    <a onclick="showSection('view')">View Students</a>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <!-- HOME -->
+    <div id="home" class="card">
+        <h1>Student Management System</h1>
+        <p>Welcome! Use menu to manage students.</p>
     </div>
 
-    <!-- CONTENT -->
-    <div class="content">
-        <div class="card" id="mainBox">
-            <h1>My Student Management System</h1>
-            <p>Welcome to the system!</p>
+    <!-- ADD -->
+    <div id="add" class="card" style="display:none;">
+        <h2>Add Student</h2>
 
-            <button onclick="goPage('add_student.html')">Add</button>
-            <button onclick="goPage('view_students.html')">View</button>
-            <button onclick="goPage('update_student.html')">Update</button>
-            <button onclick="goPage('delete_student.html')">Delete</button>
-        </div>
+        <input type="text" id="id" placeholder="Student ID">
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="course" placeholder="Course">
+
+        <button onclick="addStudent()">Save</button>
+    </div>
+
+    <!-- VIEW -->
+    <div id="view" class="card" style="display:none;">
+        <h2>Student List</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="table"></tbody>
+        </table>
     </div>
 
 </div>
+</div>
 
 <script>
-function toggleMenu() {
-    document.getElementById("sidebar").classList.toggle("active");
+
+// SWITCH SECTION
+function showSection(section) {
+    document.getElementById("home").style.display = "none";
+    document.getElementById("add").style.display = "none";
+    document.getElementById("view").style.display = "none";
+
+    document.getElementById(section).style.display = "block";
+
+    if(section === "view") displayStudents();
 }
 
-function goPage(page) {
-    const box = document.getElementById("mainBox");
-    box.style.opacity = "0";
-
-    setTimeout(() => {
-        window.location.href = page;
-    }, 400);
+// GET DATA
+function getStudents() {
+    return JSON.parse(localStorage.getItem("students")) || [];
 }
+
+// SAVE DATA
+function saveStudents(data) {
+    localStorage.setItem("students", JSON.stringify(data));
+}
+
+// ADD
+function addStudent() {
+    let id = document.getElementById("id").value;
+    let name = document.getElementById("name").value;
+    let course = document.getElementById("course").value;
+
+    let students = getStudents();
+
+    students.push({ id, name, course });
+
+    saveStudents(students);
+
+    alert("Student Added!");
+
+    document.getElementById("id").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("course").value = "";
+}
+
+// DISPLAY
+function displayStudents() {
+    let students = getStudents();
+    let table = document.getElementById("table");
+
+    table.innerHTML = "";
+
+    students.forEach((s, index) => {
+        table.innerHTML += `
+        <tr>
+            <td>${s.id}</td>
+            <td>${s.name}</td>
+            <td>${s.course}</td>
+            <td>
+                <button onclick="editStudent(${index})">Edit</button>
+                <button onclick="deleteStudent(${index})">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+// DELETE
+function deleteStudent(index) {
+    let students = getStudents();
+    students.splice(index, 1);
+    saveStudents(students);
+    displayStudents();
+}
+
+// EDIT
+function editStudent(index) {
+    let students = getStudents();
+    let s = students[index];
+
+    showSection('add');
+
+    document.getElementById("id").value = s.id;
+    document.getElementById("name").value = s.name;
+    document.getElementById("course").value = s.course;
+
+    deleteStudent(index); // remove old
+}
+
 </script>
 
 </body>
