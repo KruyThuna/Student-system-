@@ -20,15 +20,23 @@
         transition: 0.3s;
       }
 
-      /* SIDEBAR */
+      /* SIDEBAR HIDDEN BY DEFAULT */
       .sidebar {
         width: 250px;
         background: #2c3e50;
         color: white;
         padding: 20px;
+        position: fixed;
+        top: 0;
+        left: -250px; /* hidden initially */
+        height: 100%;
+        z-index: 1000;
         transition: 0.3s;
-        flex-shrink: 0;
       }
+      .sidebar.active {
+        left: 0;
+      }
+
       .sidebar a {
         display: block;
         padding: 12px;
@@ -69,8 +77,12 @@
       .content {
         flex: 1;
         padding: 20px;
-        box-sizing: border-box;
+        margin-left: 0;
+        transition: 0.3s;
       }
+      .content.shifted {
+        margin-left: 250px;
+      } /* shift when sidebar visible */
       .card {
         background: white;
         padding: 20px;
@@ -176,10 +188,10 @@
         background: #3498db;
       }
 
-      /* BOTTOM PROFILE FORM */
+      /* BOTTOM PROFILE FORM (SCROLLABLE) */
       .profile-form {
         position: fixed;
-        bottom: -100%;
+        bottom: 0;
         left: 0;
         right: 0;
         background: white;
@@ -191,9 +203,18 @@
         z-index: 1000;
         max-height: 90%;
         overflow-y: auto;
+        box-sizing: border-box;
+        display: none;
       }
       .profile-form.active {
-        bottom: 0;
+        display: block;
+      }
+      .profile-form::-webkit-scrollbar {
+        width: 6px;
+      }
+      .profile-form::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 3px;
       }
       .open-form-btn {
         position: fixed;
@@ -213,6 +234,21 @@
       .open-form-btn:hover {
         background: #2980b9;
         transform: scale(1.05);
+      }
+
+      /* MENU BUTTON */
+      .menu-btn {
+        display: block;
+        background: #3498db;
+        color: white;
+        padding: 10px;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1001;
       }
 
       /* BOTTOM NAVIGATION */
@@ -269,32 +305,15 @@
         .grid {
           grid-template-columns: 1fr;
         }
-        .sidebar {
-          width: 200px;
-          position: absolute;
-          left: -250px;
-          top: 0;
-          height: 100%;
-          z-index: 1000;
-        }
-        .sidebar.active {
-          left: 0;
-        }
-        .menu-btn {
-          display: block;
-          width: 100%;
-          padding: 10px;
-          border: none;
-          background: #3498db;
-          color: white;
-          cursor: pointer;
-        }
         .bottom-nav {
           display: flex;
         }
         .profile-img {
           width: 80px;
           height: 80px;
+        }
+        .content.shifted {
+          margin-left: 0;
         }
       }
       @media (max-width: 480px) {
@@ -318,12 +337,14 @@
         }
       }
     </style>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
   </head>
   <body>
+    <!-- MENU BUTTON -->
     <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
     <div class="wrapper">
@@ -345,7 +366,7 @@
       </div>
 
       <!-- CONTENT -->
-      <div class="content">
+      <div class="content" id="mainContent">
         <!-- HOME -->
         <div id="home" class="card">
           <h1>Welcome to Student System</h1>
@@ -485,6 +506,7 @@
       // MENU
       function toggleMenu() {
         document.getElementById("sidebar").classList.toggle("active");
+        document.getElementById("mainContent").classList.toggle("shifted");
       }
 
       // SWITCH SECTION DESKTOP
