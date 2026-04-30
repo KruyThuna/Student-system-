@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student System</title>
+  <style>
+    body { font-family: Arial; margin: 0; background:#f4f6f9; }
+    .container { width: 400px; margin: 60px auto; background: #fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);} 
+    h2 { text-align:center; }
+    input, button { width:100%; padding:10px; margin:8px 0; }
+    button { background:#007bff; color:white; border:none; cursor:pointer; }
+    button:hover { background:#0056b3; }
+    .hidden { display:none; }
+    .dashboard { padding:20px; }
+    table { width:100%; border-collapse:collapse; }
+    table, th, td { border:1px solid #ddd; }
+    th, td { padding:10px; text-align:left; }
+    img { width:50px; height:50px; object-fit:cover; }
+  </style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="container">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="hidden dashboard">
+  <h2>Dashboard</h2>
+  <button onclick="showForm()">Add New Member</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Age</th>
+        <th>Phone</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="memberList"></tbody>
+  </table>
+</div>
+
+<!-- Add Member Form -->
+<div id="formPage" class="container hidden">
+  <h2>Add Member</h2>
+  <input type="text" id="firstName" placeholder="First Name">
+  <input type="text" id="lastName" placeholder="Last Name">
+  <input type="text" id="studentId" placeholder="Student ID">
+  <input type="number" id="age" placeholder="Age">
+  <input type="text" id="phone" placeholder="Phone Number">
+  <input type="email" id="email" placeholder="Email">
+  <input type="file" id="image" accept="image/*">
+  <button onclick="addMember()">Submit</button>
+  <button onclick="backDashboard()">Back</button>
+</div>
+
+<script>
+  let members = [];
+
+  function login() {
+    let user = document.getElementById('username').value;
+    let pass = document.getElementById('password').value;
+
+    if(user === 'admin' && pass === '1234') {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+    } else {
+      alert('Invalid login');
+    }
+  }
+
+  function showForm() {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('formPage').classList.remove('hidden');
+  }
+
+  function backDashboard() {
+    document.getElementById('formPage').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+  }
+
+  function addMember() {
+    let firstName = document.getElementById('firstName').value;
+    let lastName = document.getElementById('lastName').value;
+    let id = document.getElementById('studentId').value;
+    let age = document.getElementById('age').value;
+    let phone = document.getElementById('phone').value;
+    let email = document.getElementById('email').value;
+    let file = document.getElementById('image').files[0];
+
+    if(!file) {
+      alert('Please upload image');
+      return;
+    }
+
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      let imageData = e.target.result;
+
+      let member = { firstName, lastName, id, age, phone, email, imageData };
+      members.push(member);
+
+      displayMembers();
+      backDashboard();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function displayMembers() {
+    let list = document.getElementById('memberList');
+    list.innerHTML = '';
+
+    members.forEach(m => {
+      let row = `<tr>
+        <td><img src="${m.imageData}"/></td>
+        <td>${m.firstName} ${m.lastName}</td>
+        <td>${m.id}</td>
+        <td>${m.age}</td>
+        <td>${m.phone}</td>
+        <td>${m.email}</td>
+      </tr>`;
+      list.innerHTML += row;
+    });
+  }
+</script>
+
+</body>
+</html>
